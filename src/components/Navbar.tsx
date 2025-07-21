@@ -1,21 +1,36 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Menu, X, Download, Phone } from "lucide-react";
+
+const navItems = [
+  { name: "Home", id: "home" },
+  { name: "About", id: "about" },
+  { name: "Services", id: "services" },
+  { name: "Projects", id: "projects" },
+  { name: "Clients", id: "clients" },
+  { name: "Contact", id: "contact" },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  // Handle scroll progress bar
   useEffect(() => {
-    const handleScroll = () => {
+    const updateScrollProgress = () => {
       const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (scrollTop / docHeight) * 100;
-      setScrollProgress(scrollPercent);
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(progress);
     };
+    window.addEventListener("scroll", updateScrollProgress);
+    return () => window.removeEventListener("scroll", updateScrollProgress);
+  }, []);
 
+  // Scroll spy for active section
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -24,157 +39,152 @@ const Navbar = () => {
           }
         });
       },
-      { threshold: 0.3, rootMargin: "-100px 0px -50% 0px" }
+      { threshold: 0.6 }
     );
 
-    const sections = document.querySelectorAll("section[id]");
-    sections.forEach((section) => observer.observe(section));
-
-    window.addEventListener("scroll", handleScroll);
+    navItems.forEach((item) => {
+      const section = document.getElementById(item.id);
+      if (section) observer.observe(section);
+    });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      observer.disconnect();
+      navItems.forEach((item) => {
+        const section = document.getElementById(item.id);
+        if (section) observer.unobserve(section);
+      });
     };
   }, []);
 
-  const navItems = [
-    { name: "Home", path: "home" },
-    { name: "About Us", path: "about" },
-    { name: "Services", path: "services" },
-    { name: "Projects", path: "projects" },
-    { name: "Contact", path: "contact" },
-  ];
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
+  // Scroll to section
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActiveSection(sectionId);
+      const offset = -80; // navbar height
+      const y = element.getBoundingClientRect().top + window.scrollY + offset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+      setActiveSection(id);
     }
     setIsOpen(false);
   };
 
-  const isActive = (path: string) => activeSection === path;
-
   return (
     <>
-      {/* Scroll Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 z-[60] bg-gradient-to-r from-orange-500 to-yellow-400" style={{ width: `${scrollProgress}%` }} />
+      {/* Scroll Progress Line */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-blue-600 z-[99]"
+        style={{ width: `${scrollProgress}%` }}
+      />
 
-      <motion.nav 
-        className="fixed top-1 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-md"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-400 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">PR</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg sm:text-xl font-display font-bold text-primary">
-                  PR Power & Infrastructures
-                </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Engineering Tomorrow's Energy
-                </p>
-              </div>
-            </button>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => scrollToSection(item.path)}
-                  className={`relative py-2 px-1 text-sm font-medium transition-all duration-300 ${
-                    isActive(item.path)
-                      ? "text-orange-500"
-                      : "text-foreground hover:text-orange-500"
-                  }`}
-                >
-                  {item.name}
-                  {isActive(item.path) && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500 rounded-full"
-                      layoutId="navbar-indicator"
-                      initial={false}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
-              <a href="/brochure.pdf" download>
-                <Button variant="outline" size="sm" className="border border-orange-500 text-orange-500 hover:bg-orange-500/10">
-                  <Download className="w-4 h-4 mr-2" />
-                  Brochure
-                </Button>
-              </a>
-              <Button size="sm" className="bg-orange-500 text-white hover:opacity-90" onClick={() => scrollToSection('contact')}>
-                <Phone className="w-4 h-4 mr-2" />
-                Contact Us
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {isOpen && (
-            <motion.div
-              className="lg:hidden py-4 border-t border-border"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="space-y-4">
-                {navItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => scrollToSection(item.path)}
-                    className={`block w-full text-left py-3 px-4 text-sm font-medium rounded-lg transition-all ${
-                      isActive(item.path)
-                        ? "text-orange-500 bg-orange-100"
-                        : "text-foreground hover:text-orange-500 hover:bg-orange-50"
-                    }`}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-                <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-                  <a href="/brochure.pdf" download>
-                    <Button variant="outline" size="sm" className="w-full border border-orange-500 text-orange-500 hover:bg-orange-100">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Brochure
-                    </Button>
-                  </a>
-                  <Button size="sm" className="w-full bg-orange-500 text-white hover:opacity-90" onClick={() => scrollToSection('contact')}>
-                    <Phone className="w-4 h-4 mr-2" />
-                    Contact Us
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
+      {/* Navbar Container */}
+      <nav className="fixed top-1 left-0 right-0 z-50 flex items-center justify-between bg-white bg-opacity-90 backdrop-blur-md border-b border-gray-200 h-20 px-4 md:px-8">
+        {/* Logo */}
+        <div
+          onClick={() => scrollToSection("home")}
+          className="text-xl font-bold text-blue-800 cursor-pointer"
+        >
+          PR Power
         </div>
-      </motion.nav>
+
+        {/* Desktop Nav Links */}
+        <ul className="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
+          {navItems.map((item) => (
+            <li
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`cursor-pointer hover:text-blue-600 transition ${
+                activeSection === item.id ? "text-blue-600 font-semibold" : ""
+              }`}
+            >
+              {item.name}
+            </li>
+          ))}
+        </ul>
+
+        {/* Desktop CTA Buttons */}
+        <div className="hidden md:flex space-x-3">
+          <a
+            href="/PR-POWER-BROCHURE.pdf"
+            className="px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white text-sm transition"
+            target="_blank"
+          >
+            Brochure
+          </a>
+          <button
+            onClick={() => scrollToSection("contact")}
+            className="px-4 py-2 bg-blue-700 text-white rounded-md text-sm hover:bg-blue-800 transition"
+          >
+            Contact
+          </button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-blue-800 focus:outline-none"
+          >
+            {isOpen ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <motion.div
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed top-20 left-0 right-0 bg-white border-b border-gray-200 z-40 md:hidden shadow-sm"
+        >
+          <ul className="flex flex-col items-center py-4 space-y-3 text-gray-700">
+            {navItems.map((item) => (
+              <li
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`cursor-pointer hover:text-blue-600 text-sm ${
+                  activeSection === item.id ? "text-blue-600 font-semibold" : ""
+                }`}
+              >
+                {item.name}
+              </li>
+            ))}
+            <li>
+              <a
+                href="/PR-POWER-BROCHURE.pdf"
+                target="_blank"
+                className="px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white text-sm transition"
+              >
+                Brochure
+              </a>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("contact")}
+                className="px-4 py-2 bg-blue-700 text-white rounded-md text-sm hover:bg-blue-800 transition"
+              >
+                Contact
+              </button>
+            </li>
+          </ul>
+        </motion.div>
+      )}
     </>
   );
 };
