@@ -119,7 +119,7 @@ const ContactPreview = () => {
                   <label className="text-sm text-muted-foreground">Full Name</label>
                   <Input
                     {...register("user_name", { required: true })}
-                    placeholder="Enter your name"
+                    placeholder="Name"
                   />
                   {errors.user_name && (
                     <span className="text-xs text-red-500">Name is required</span>
