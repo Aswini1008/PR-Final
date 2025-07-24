@@ -20,6 +20,9 @@ const Navbar = () => {
 
   // Scroll spy for section highlighting
   useEffect(() => {
+    // Only run scroll spy on home page
+    if (location.pathname !== "/") return;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -49,6 +52,12 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const scrollToSection = (id: string) => {
+    // If not on home page, navigate to home first
+    if (location.pathname !== "/") {
+      window.location.href = `/#${id}`;
+      return;
+    }
+    
     const element = document.getElementById(id);
     if (element) {
       const offset = -80;
@@ -59,6 +68,15 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
+  const handleNavClick = (item) => {
+    if (item.path) {
+      // For route-based navigation
+      return;
+    } else {
+      // For section-based navigation
+      scrollToSection(item.id);
+    }
+  };
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white bg-opacity-90 backdrop-blur-md border-b border-orange-100 h-20 px-4 md:px-8 shadow-sm">
@@ -84,9 +102,9 @@ const Navbar = () => {
             ) : (
               <li
                 key={item.id}
-                onClick={() => scrollToSection(item.id!)}
+                onClick={() => handleNavClick(item)}
                 className={`cursor-pointer hover:text-orange-600 transition ${
-                  activeSection === item.id ? "text-orange-600 font-semibold" : ""
+                  location.pathname === "/" && activeSection === item.id ? "text-orange-600 font-semibold" : ""
                 }`}
               >
                 {item.name}
@@ -104,7 +122,7 @@ const Navbar = () => {
             Brochure
           </a>
           <span
-            onClick={() => scrollToSection("contact")}
+            onClick={() => handleNavClick({ id: "contact" })}
             className="px-4 py-2 bg-orange-600 text-white rounded-md text-sm hover:bg-orange-700 transition cursor-pointer"
           >
             Contact
@@ -142,7 +160,9 @@ const Navbar = () => {
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="hover:text-orange-600"
+                    className={`hover:text-orange-600 ${
+                      location.pathname === item.path ? "text-orange-600 font-semibold" : ""
+                    }`}
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}
@@ -151,9 +171,9 @@ const Navbar = () => {
               ) : (
                 <li
                   key={item.id}
-                  onClick={() => scrollToSection(item.id!)}
+                  onClick={() => handleNavClick(item)}
                   className={`cursor-pointer hover:text-orange-600 ${
-                    activeSection === item.id ? "text-orange-600 font-semibold" : ""
+                    location.pathname === "/" && activeSection === item.id ? "text-orange-600 font-semibold" : ""
                   }`}
                 >
                   {item.name}
@@ -171,7 +191,7 @@ const Navbar = () => {
             </li>
             <li>
               <span
-                onClick={() => scrollToSection("contact")}
+                onClick={() => handleNavClick({ id: "contact" })}
                 className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition cursor-pointer"
               >
                 Contact

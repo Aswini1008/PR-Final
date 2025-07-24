@@ -2,6 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import {
   Phone,
   Mail,
@@ -14,12 +15,34 @@ import {
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
+  const location = useLocation();
+  
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleQuickLinkClick = (path) => {
+    if (path.startsWith("/")) {
+      // Route-based navigation
+      return;
+    } else {
+      // Section-based navigation
+      if (location.pathname !== "/") {
+        // If not on home page, navigate to home with hash
+        window.location.href = `/#${path}`;
+      } else {
+        // If on home page, scroll to section
+        const element = document.getElementById(path);
+        if (element) {
+          const offset = -80;
+          const y = element.getBoundingClientRect().top + window.scrollY + offset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }
+    }
+  };
   const quickLinks = [
-    { name: "About Us", path: "about" },
+    { name: "About Us", path: "about-section" },
     { name: "Services", path: "services" },
     { name: "Projects", path: "/projects" },
     { name: "Contact", path: "contact" },
@@ -97,12 +120,21 @@ const Footer = () => {
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
-                    <Link
-                      to={link.path}
-                      className="text-white/80 hover:text-orange-400 transition duration-300"
-                    >
-                      {link.name}
-                    </Link>
+                    {link.path.startsWith("/") ? (
+                      <Link
+                        to={link.path}
+                        className="text-white/80 hover:text-orange-400 transition duration-300"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => handleQuickLinkClick(link.path)}
+                        className="text-white/80 hover:text-orange-400 transition duration-300 text-left"
+                      >
+                        {link.name}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -121,9 +153,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {services.map((service, index) => (
                   <li key={index}>
-                    <span className="text-white/80 hover:text-orange-400 transition duration-300 cursor-pointer">
+                    <button
+                      onClick={() => handleQuickLinkClick("services")}
+                      className="text-white/80 hover:text-orange-400 transition duration-300 text-left"
+                    >
                       {service}
-                    </span>
+                    </button>
                   </li>
                 ))}
               </ul>

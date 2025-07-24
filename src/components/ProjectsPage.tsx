@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // Project data
 const projects = [
@@ -116,6 +117,8 @@ const ProjectsPage = () => {
           </motion.div>
         </div>
       </section>
+      
+      <Footer />
     </>
   );
 };
