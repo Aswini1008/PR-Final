@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { name: "Home", id: "home" },
   { name: "About", id: "about" },
   { name: "Services", id: "services" },
-  { name: "Projects", id: "projects" },
+  { name: "Projects", path: "/projects" }, // Route-based
   { name: "Clients", id: "clients" },
   { name: "Contact", id: "contact" },
 ];
@@ -15,7 +16,9 @@ const navItems = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const location = useLocation();
 
+  // Scroll spy for section highlighting
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -29,17 +32,21 @@ const Navbar = () => {
     );
 
     navItems.forEach((item) => {
-      const section = document.getElementById(item.id);
-      if (section) observer.observe(section);
+      if (item.id) {
+        const section = document.getElementById(item.id);
+        if (section) observer.observe(section);
+      }
     });
 
     return () => {
       navItems.forEach((item) => {
-        const section = document.getElementById(item.id);
-        if (section) observer.unobserve(section);
+        if (item.id) {
+          const section = document.getElementById(item.id);
+          if (section) observer.unobserve(section);
+        }
       });
     };
-  }, []);
+  }, [location.pathname]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -54,31 +61,40 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Navbar Container */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white bg-opacity-90 backdrop-blur-md border-b border-orange-100 h-20 px-4 md:px-8 shadow-sm">
-        <div
-          onClick={() => scrollToSection("home")}
-          className="text-xl font-bold text-orange-700 cursor-pointer"
-        >
+        <Link to="/" className="text-xl font-bold text-orange-700">
           PR Power
-        </div>
+        </Link>
 
-        {/* Desktop Nav */}
         <ul className="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
-          {navItems.map((item) => (
-            <li
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`cursor-pointer hover:text-orange-500 transition ${
-                activeSection === item.id ? "text-orange-600 font-semibold" : ""
-              }`}
-            >
-              {item.name}
-            </li>
-          ))}
+          {navItems.map((item) =>
+            item.path ? (
+              <li key={item.name}>
+                <Link
+                  to={item.path}
+                  className={`hover:text-orange-600 transition ${
+                    location.pathname === item.path
+                      ? "text-orange-600 font-semibold"
+                      : ""
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ) : (
+              <li
+                key={item.id}
+                onClick={() => scrollToSection(item.id!)}
+                className={`cursor-pointer hover:text-orange-600 transition ${
+                  activeSection === item.id ? "text-orange-600 font-semibold" : ""
+                }`}
+              >
+                {item.name}
+              </li>
+            )
+          )}
         </ul>
 
-        {/* Desktop CTAs */}
         <div className="hidden md:flex space-x-3">
           <a
             href="/PR-POWER-BROCHURE.pdf"
@@ -87,12 +103,12 @@ const Navbar = () => {
           >
             Brochure
           </a>
-          <button
+          <span
             onClick={() => scrollToSection("contact")}
-            className="px-4 py-2 bg-orange-600 text-white rounded-md text-sm hover:bg-orange-700 transition"
+            className="px-4 py-2 bg-orange-600 text-white rounded-md text-sm hover:bg-orange-700 transition cursor-pointer"
           >
             Contact
-          </button>
+          </span>
         </div>
 
         {/* Mobile Toggle */}
@@ -114,7 +130,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <motion.div
           initial={{ y: -20, opacity: 0 }}
@@ -122,17 +137,29 @@ const Navbar = () => {
           className="fixed top-20 left-0 right-0 bg-white border-b border-orange-100 z-40 md:hidden shadow-sm"
         >
           <ul className="flex flex-col items-center py-4 space-y-3 text-gray-700 text-sm">
-            {navItems.map((item) => (
-              <li
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={`cursor-pointer hover:text-orange-500 ${
-                  activeSection === item.id ? "text-orange-600 font-semibold" : ""
-                }`}
-              >
-                {item.name}
-              </li>
-            ))}
+            {navItems.map((item) =>
+              item.path ? (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="hover:text-orange-600"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ) : (
+                <li
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id!)}
+                  className={`cursor-pointer hover:text-orange-600 ${
+                    activeSection === item.id ? "text-orange-600 font-semibold" : ""
+                  }`}
+                >
+                  {item.name}
+                </li>
+              )
+            )}
             <li>
               <a
                 href="/PR-POWER-BROCHURE.pdf"
@@ -143,12 +170,12 @@ const Navbar = () => {
               </a>
             </li>
             <li>
-              <button
+              <span
                 onClick={() => scrollToSection("contact")}
-                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition"
+                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition cursor-pointer"
               >
                 Contact
-              </button>
+              </span>
             </li>
           </ul>
         </motion.div>
