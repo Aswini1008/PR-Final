@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 // Project data
 const projects = [
@@ -35,8 +33,6 @@ const projects = [
 const ProjectsPage = () => {
   return (
     <>
-      <Navbar />
-
       {/* Hero Banner */}
       <section className="relative bg-[url('/projects-banner.jpg')] bg-cover bg-center text-white py-28">
         <div className="absolute inset-0 bg-black/70 z-0" />
@@ -117,8 +113,6 @@ const ProjectsPage = () => {
           </motion.div>
         </div>
       </section>
-      
-      <Footer />
     </>
   );
 };

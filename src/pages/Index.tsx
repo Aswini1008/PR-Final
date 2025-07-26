@@ -4,12 +4,10 @@ import ServicesOverview from "@/components/ServicesOverview";
 import AboutPreview from "@/components/AboutPreview";
 import ClientsSection from "@/components/ClientsSection";
 import ContactPreview from "@/components/ContactPreview";
-import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
       <section id="home">
         <HeroSection />
       </section>
@@ -25,7 +23,6 @@ const Index = () => {
       <section id="contact">
         <ContactPreview />
       </section>
-      <Footer />
     </div>
   );
 };
