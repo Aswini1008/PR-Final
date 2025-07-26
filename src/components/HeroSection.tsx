@@ -4,28 +4,31 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download } from "lucide-react";
 import heroImage from "@/assets/hero-power-infrastructure.jpg";
+import { useNavigate } from "react-router-dom"; // ⬅️ for routing
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section
       id="home"
-      className="relative flex items-center justify-center overflow-hidden bg-black"
-      style={{ minHeight: "100vh" }}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
       role="banner"
     >
-      {/* Background Image Layer */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
           src={heroImage}
           alt="PR Power infrastructure"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover scale-105 md:scale-100 transition-transform duration-1000"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[#2C2C2C]/80 via-black/70 to-[#F26B1D]/70" />
       </div>
 
-      {/* Content Layer */}
-      <div className="relative z-10 w-full px-4 sm:px-8 py-24 sm:py-32 text-white">
-        <div className="max-w-5xl mx-auto text-center">
+      {/* Foreground Content */}
+      <div className="relative z-10 container mx-auto px-4 py-16 sm:py-24 lg:py-32">
+        <div className="text-center text-white max-w-4xl mx-auto">
+          {/* Heading */}
           <motion.h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 font-display"
             initial={{ opacity: 0, y: 40 }}
@@ -39,8 +42,9 @@ const HeroSection = () => {
             Today
           </motion.h1>
 
+          {/* Subheading */}
           <motion.p
-            className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
@@ -59,11 +63,8 @@ const HeroSection = () => {
           >
             <Button
               size="lg"
-              className="bg-[#F26B1D] hover:bg-orange-600 text-white px-8 py-4 rounded-full font-medium"
-              onClick={() => {
-                const section = document.getElementById("projects");
-                section?.scrollIntoView({ behavior: "smooth" });
-              }}
+              className="bg-[#F26B1D] hover:bg-orange-600 text-white text-base px-8 py-4 rounded-full font-medium transition"
+              onClick={() => navigate("/projects")} // ⬅️ Route to Projects Page
             >
               View Our Projects <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
@@ -71,7 +72,7 @@ const HeroSection = () => {
             <a href="/brochure.pdf" download>
               <Button
                 size="lg"
-                className="bg-white text-[#F26B1D] hover:bg-[#F26B1D] hover:text-white px-8 py-4 rounded-full"
+                className="bg-white text-[#F26B1D] hover:bg-[#F26B1D] hover:text-white text-base px-8 py-4 rounded-full transition"
               >
                 <Download className="mr-2 w-5 h-5" />
                 Download Brochure
@@ -86,18 +87,18 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.6 }}
           >
-            {[
-              { value: "30+", label: "Years of Experience" },
-              { value: "100+", label: "Projects Completed" },
-              { value: "400kV", label: "Turnkey Capability" },
-            ].map((stat, i) => (
-              <div key={i}>
-                <div className="text-4xl font-bold text-[#F26B1D]">
-                  {stat.value}
-                </div>
-                <p className="text-white/80 text-sm mt-1">{stat.label}</p>
-              </div>
-            ))}
+            <div>
+              <div className="text-4xl font-bold text-[#F26B1D]">30+</div>
+              <p className="text-white/80 text-sm mt-1">Years of Experience</p>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-[#F26B1D]">100+</div>
+              <p className="text-white/80 text-sm mt-1">Projects Completed</p>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-[#F26B1D]">400kV</div>
+              <p className="text-white/80 text-sm mt-1">Turnkey Capability</p>
+            </div>
           </motion.div>
         </div>
       </div>
