@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -15,31 +14,25 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const location = useLocation();
-  
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleQuickLinkClick = (path) => {
-    if (path.startsWith("/")) {
-      // Route-based navigation
-      return;
+    if (path.startsWith("/")) return;
+    if (location.pathname !== "/") {
+      window.location.href = `/#${path}`;
     } else {
-      // Section-based navigation
-      if (location.pathname !== "/") {
-        // If not on home page, navigate to home with hash
-        window.location.href = `/#${path}`;
-      } else {
-        // If on home page, scroll to section
-        const element = document.getElementById(path);
-        if (element) {
-          const offset = -80;
-          const y = element.getBoundingClientRect().top + window.scrollY + offset;
-          window.scrollTo({ top: y, behavior: "smooth" });
-        }
+      const element = document.getElementById(path);
+      if (element) {
+        const offset = -80;
+        const y = element.getBoundingClientRect().top + window.scrollY + offset;
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
     }
   };
+
   const quickLinks = [
     { name: "About Us", path: "about-section" },
     { name: "Services", path: "services" },
@@ -62,7 +55,6 @@ const Footer = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-orange-400/30 to-transparent" />
       </div>
 
-      {/* Main Footer Content */}
       <div className="relative z-10">
         <div className="container mx-auto px-4 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -79,9 +71,7 @@ const Footer = () => {
                   <span className="text-2xl font-bold text-white">PR</span>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold">
-                    PR Power & Infrastructures
-                  </h3>
+                  <h3 className="text-2xl font-bold">PR Power & Infrastructures</h3>
                   <p className="text-white/80">
                     Engineering Tomorrow's Energy Infrastructure Today
                   </p>
@@ -89,15 +79,20 @@ const Footer = () => {
               </div>
 
               <p className="text-white/90 leading-relaxed mb-6 max-w-md">
-                Since 2018, we've delivered turnkey infrastructure solutions
-                across South India in AIS/GIS substations, transmission lines,
-                and renewables.
+                Since 2018, we've delivered turnkey infrastructure solutions across
+                South India in AIS/GIS substations, transmission lines, and renewables.
               </p>
 
-              <a href="/brochure.pdf" download>
+              {/* ✅ Brochure Link */}
+              <a
+                href="/PR-POWER-BROCHURE.pdf"
+                download="PR-POWER-BROCHURE.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button
                   variant="outline"
-                  className="border border-orange-500 text-orange-500 hover:bg-orange-500/10"
+                  className="border border-orange-500 text-orange-500 hover:bg-orange-500"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download Company Profile
@@ -113,9 +108,7 @@ const Footer = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-xl font-bold mb-6 text-orange-400">
-                Quick Links
-              </h4>
+              <h4 className="text-xl font-bold mb-6 text-orange-400">Quick Links</h4>
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
@@ -139,16 +132,14 @@ const Footer = () => {
               </ul>
             </motion.div>
 
-            {/* Services List */}
+            {/* Services */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-xl font-bold mb-6 text-orange-400">
-                Our Services
-              </h4>
+              <h4 className="text-xl font-bold mb-6 text-orange-400">Our Services</h4>
               <ul className="space-y-3">
                 {services.map((service, index) => (
                   <li key={index}>
@@ -186,18 +177,14 @@ const Footer = () => {
                 <Mail className="w-5 h-5 text-orange-400" />
                 <div>
                   <p className="font-medium">Email Us</p>
-                  <p className="text-sm text-white/80">
-                    prpowerinfra@gmail.com
-                  </p>
+                  <p className="text-sm text-white/80">prpowerinfra@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-orange-400" />
                 <div>
                   <p className="font-medium">Visit Us</p>
-                  <p className="text-sm text-white/80">
-                    Chennai (Avadi), Tamil Nadu
-                  </p>
+                  <p className="text-sm text-white/80">Chennai (Avadi), Tamil Nadu</p>
                 </div>
               </div>
             </div>
@@ -212,10 +199,7 @@ const Footer = () => {
                 © 2025 PR Power and Infrastructures. All rights reserved.
               </div>
               <div className="flex items-center space-x-6">
-                <Link
-                  to="#"
-                  className="text-white/70 hover:text-orange-400 transition"
-                >
+                <Link to="#" className="text-white/70 hover:text-orange-400 transition">
                   <Linkedin className="w-5 h-5" />
                 </Link>
                 <button

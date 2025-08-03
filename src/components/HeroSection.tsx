@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download } from "lucide-react";
 import heroImage from "@/assets/hero-power-infrastructure.jpg";
-import { useNavigate } from "react-router-dom"; // ⬅️ for routing
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -64,12 +64,12 @@ const HeroSection = () => {
             <Button
               size="lg"
               className="bg-[#F26B1D] hover:bg-orange-600 text-white text-base px-8 py-4 rounded-full font-medium transition"
-              onClick={() => navigate("/projects")} // ⬅️ Route to Projects Page
+              onClick={() => navigate("/projects")}
             >
               View Our Projects <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
-            <a href="/brochure.pdf" download>
+            <a href="/PR-POWER-BROCHURE.pdf" download>
               <Button
                 size="lg"
                 className="bg-white text-[#F26B1D] hover:bg-[#F26B1D] hover:text-white text-base px-8 py-4 rounded-full transition"
