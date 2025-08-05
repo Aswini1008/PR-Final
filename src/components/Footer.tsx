@@ -199,9 +199,9 @@ const Footer = () => {
                 © 2025 PR Power and Infrastructures. All rights reserved.
               </div>
               <div className="flex items-center space-x-6">
-                <Link to="#" className="text-white/70 hover:text-orange-400 transition">
+                {/* <Link to="#" className="text-white/70 hover:text-orange-400 transition">
                   <Linkedin className="w-5 h-5" />
-                </Link>
+                </Link> */}
                 <button
                   onClick={scrollToTop}
                   className="flex items-center space-x-2 text-white/70 hover:text-orange-400 transition"
